@@ -14,7 +14,15 @@ class Tooth(pygame.sprite.Sprite):
         self.collision_rect = [sprite.rect for sprite in collision_sprites]
         self.speed = 200
 
+        self.hit_timer = Timer(550)
+
+    def reverse(self):
+        if not self.hit_timer.active:
+            self.direction *= -1
+            self.hit_timer.activate()
+
     def update(self, dt):
+        self.hit_timer.update()
 
         #animate
         self.frame_index += ANIMATION_SPEED * dt
@@ -99,9 +107,14 @@ class Pearl(pygame.sprite.Sprite):
         self.direction = direction
         self.speed = speed
         self.z = Z_LAYERS["main"]
-        self.timers = {"lifetime": Timer(5000)}
+        self.timers = {"lifetime": Timer(5000), "reverse": Timer(550)}
         self.timers["lifetime"].activate()
     
+    def reverse(self):
+        if not self.timers["reverse"].active:
+            self.direction *= -1
+            self.timers["reverse"].activate()
+
     def update(self, dt):
         for timer in self.timers.values():
             timer.update()
