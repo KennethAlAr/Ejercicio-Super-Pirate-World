@@ -128,6 +128,28 @@ class Overworld:
                         level = key
                         )
 
+    def input_controller(self):
+        # inicialize joystick
+        joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+        for joystick in joysticks:
+            joystick.init()
+
+        # control logic
+        x = pygame.joystick.Joystick(0).get_hat(0)[0]
+        y = pygame.joystick.Joystick(0).get_hat(0)[1]
+
+        if x == 1 and self.current_node.can_move("right"):
+            self.move("right")
+        if x == -1 and self.current_node.can_move("left"):
+            self.move("left")
+        if y == 1 and self.current_node.can_move("up"):
+            self.move("up")
+        if y == -1 and self.current_node.can_move("down"):
+            self.move("down")
+        if pygame.joystick.Joystick(0).get_button(0):
+            self.data.current_level = self.current_node.level
+            self.switch_stage("level")
+        
     def input(self):
         keys = pygame.key.get_pressed()
         if self.current_node and not self.icon.path:
@@ -155,7 +177,8 @@ class Overworld:
             self.current_node = nodes[0]
 
     def run(self, dt):
-        self.input()
+        self.input_controller()
+        # self.input()
         self.get_current_node()
         self.all_sprites.update(dt)
         self.all_sprites.draw(self.icon.rect.center)

@@ -208,7 +208,7 @@
     <property name="inverted" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="193" name="floor_spike" gid="239" x="641.333" y="320.667" width="64" height="64">
+  <object id="193" name="floor_spike" gid="239" x="705.333" y="320.667" width="64" height="64">
    <properties>
     <property name="inverted" type="bool" value="false"/>
    </properties>
