@@ -5,22 +5,22 @@ from math import sin
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, collision_sprites, semi_collision_sprites, frames, data):
-        #general setup
+        # general setup
         super().__init__(groups)
         self.z = Z_LAYERS["main"]
         self.data = data
 
-        #image
+        # image
         self.frames, self.frame_index = frames, 0
         self.state, self.facing_right = "idle", True
         self.image = self.frames[self.state][self.frame_index]
         
-        #rects
+        # rects
         self.rect = self.image.get_frect(topleft = pos)
         self.hitbox_rect = self.rect.inflate(-76, -36)
         self.old_rect = self.hitbox_rect.copy()
 
-        #movement
+        # movement
         self.direction = vector()
         self.speed = 200
         self.gravity = 1300
@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_height = 900
         self.attacking = False
 
-        #collision
+        # collision
         self.collision_sprites = collision_sprites
         self.semi_collision_sprites = semi_collision_sprites
         self.on_surface = {"floor" : False,
@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
                            "right": False}
         self.platform = None
         
-        #timer
+        # timer
         self.timers = {
             "wall jump": Timer(400),
             "wall slide block": Timer(250),
@@ -44,6 +44,34 @@ class Player(pygame.sprite.Sprite):
             "attack block": Timer(550),
             "hit": Timer(500)
         }
+
+    def input_controller(self):
+        # inicialize joystick
+        joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+        for joystick in joysticks:
+            joystick.init()
+
+        # control logic
+        input_vector = vector (0, 0)
+        x = pygame.joystick.Joystick(0).get_hat(0)[0]
+        y = pygame.joystick.Joystick(0).get_hat(0)[1]
+
+        if not self.timers["wall jump"].active:
+            if x == 1:
+                input_vector.x += 1
+                self.facing_right = True
+            if x == -1:
+                input_vector.x -= 1
+                self.facing_right = False
+            if y == -1:
+                self.timers["platform skip"].activate()
+            if pygame.joystick.Joystick(0).get_button(2):
+                self.attack()        
+
+            self.direction.x = input_vector.x if input_vector else input_vector.x
+
+        if pygame.joystick.Joystick(0).get_button(0):
+            self.jump = True
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -204,7 +232,8 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.hitbox_rect.copy()
         self.update_timers()
         
-        self.input()
+        self.input_controller()
+        # self.input()
         self.move(dt)
         self.platform_move(dt)
         self.check_contact()
