@@ -98,7 +98,6 @@ class Level:
             if obj.name == "flag":
                 self.level_finish_rect = pygame.FRect((obj.x, obj.y), (obj.width, obj.height))
 
-
         # moving objects
         for obj in tmx_map.get_layer_by_name("Moving Objects"):
             if obj.name == "spike":

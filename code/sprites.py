@@ -1,3 +1,4 @@
+from pygame.sprite import Group
 from settings import *
 from math import sin, cos, radians
 from random import randint
@@ -143,3 +144,24 @@ class Cloud(Sprite):
 
         if self.rect.right <= 0:
             self.kill()
+
+class Node(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups, level, data):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_frect(center = (pos[0]+ TILE_SIZE / 2, pos[1]+ TILE_SIZE / 2))
+        self.z = Z_LAYERS["path"]
+        self.level = level
+        self.data = data
+
+class Icon(pygame.sprite.Sprite):
+    def __init__(self, pos, groups, frames):
+        super().__init__(groups)
+        self.icon = True
+        # image
+        self.frames, self.frame_index = frames, 0
+        self.state = "idle"
+        self.image = self.frames[self.state][self.frame_index]
+        self.z = Z_LAYERS["main"]
+        # rect
+        self.rect = self.image.get_frect(center = pos)
