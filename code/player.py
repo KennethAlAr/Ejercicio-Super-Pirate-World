@@ -232,8 +232,8 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.hitbox_rect.copy()
         self.update_timers()
         
-        self.input_controller()
-        # self.input()
+        # self.input_controller()
+        self.input()
         self.move(dt)
         self.platform_move(dt)
         self.check_contact()
